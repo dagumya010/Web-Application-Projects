@@ -1,0 +1,15 @@
+MediFind is a data driven web application with category based searches about health care facilities 
+for users who are unhappy with the lack of collective information available on health care. 
+
+Functions
+1) User Login | Registration
+2) User History
+3) MediFind Search Function
+   Parameters: categories such as clinics, pharmacy, hospitals,
+
+Specific information returned about chosen facility 
+■ Contact information 
+■ Hours 
+■ Appointment Scheduling 
+■ Available reviews and ratings. 
+■ Doctor information 
