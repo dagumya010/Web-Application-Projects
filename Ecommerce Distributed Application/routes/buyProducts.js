@@ -2,6 +2,14 @@ var express = require('express');
 var router = express.Router();
 var pool = require('../database');
 
+/**
+HELPER METHODS
+*/
+/**
+Handles the parsing and inserting of data into the Purchases and Orders Tables. This Keeps track of each 
+puchase made and what order it was in and the username of the person making the order
+*/
+
 var add_toPurchases = function(request, response){
     pool.getConnection(function (err, connection) {
         if (err) {
@@ -9,14 +17,6 @@ var add_toPurchases = function(request, response){
             console.log(err);
             return;
         }
-
-        // check that the asin is in the table
-        /**
-         * TODO Run a match again boolean query to check if asin's are in the db
-         * TODO if any of them are not then return to the user that they are not
-         * @type {{}}
-         */
-            // insert into the Purchases Table
         var insert_user = {};
         insert_user.username = request.session.key.user_name;
         connection.query('INSERT INTO Purchase SET ? ', insert_user, function (err, result) {
@@ -24,11 +24,9 @@ var add_toPurchases = function(request, response){
                 console.log(err);
                 return
             }
-
             var key = result.insertId;
             var to_insert = {};
             var products = request.body.products;
-
             products.forEach(function (product_purchased) {
                 to_insert.purchaseId = key;
                 to_insert.asin = product_purchased.asin;
@@ -40,17 +38,18 @@ var add_toPurchases = function(request, response){
                     }
                 });
             });
-
             response.json({"message": "Products added to orders"});
         });
         connection.release();
     });
 };
+/**
+Handles the parsing and insertion of data into the product recommendation tables { ProductRec Associated Products}
+this keeps track of the products that are bought together.
+*/
 var add_toProductRec = function(request){
-
     var products = request.body.products;
     var productMap = new Map();
-    //
     products.forEach(function (product) {
         var map_value = [];
         products.forEach(function (product2) {
@@ -104,7 +103,9 @@ var add_toProductRec = function(request){
     connection.release();
     });
 };
-
+/**
+The main post method that will handle the recording of products purchased.
+*/
 router.post('/',function (request, response) {
     /**
      * Check that  the user is logged into the system
